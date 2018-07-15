@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+@using wall.Models
+@model ViewModel
+<h1>Welcome, @ViewBag.User.first @ViewBag.User.last!</h1>
+<div class="container">
+    <table>
+        <form class="form" asp-action="PostMessage" asp-controller="Home" method="post">
+            <tr>
+                <td><label asp-for="messages.content">Post A Message:</label></td>
+            </tr>
+            <tr>
+                <td><textarea name="content" cols="120" rows="3"></textarea></td>
+                <td><span asp-validation-for="messages.content"></span></td>
+            </tr>
+            <tr>
+                <td style="float:right"><button class="btn btn-primary">Post Message</button></td>
+            </tr>
+        </form>
+    </table>
+</div>
+@foreach(var i in ViewBag.messages)
+{
+    <div class="container">
+        <br><p>@i.Creator.first @i.Creator.last - @i.created_at.ToString("MMMM dd, yyyy")</p><br>
+        <p style="text-indent: 20px;">@i.content</p>
+        @foreach(var j in ViewBag.comments)
+        {
+            @if (@j.MessageId == i.Id)
+            {
+                <br>
+                <p style="text-indent: 44px;">@j.Creator.first @j.Creator.last - @j.created_at.ToString("MMMM dd yyyy")</p>
+                <p style="text-indent: 65px;">@j.content</p>
+            }
+        }
+    </div>
+    <div class="container">
+        <table>
+            <form asp-controller="Home" asp-action="PostComment" method="post">
+                <tr>
+                    <td>
+                        <label asp-for="comments.content">Post A Comment:</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea name="content" cols="90" rows="3"></textarea>
+                    </td>
+                    <td>
+                        <input type="hidden" name="Messageid" value=@i.Id>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button style="float:right;" class="btn btn-success">Comment this Message</button>
+                    </td>
+                </tr>
+            </form>
+        </table>
+    </div>
+}
